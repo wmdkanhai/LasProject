@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5AC8FA</color>
+    <color name="colorPrimaryDark">#5AC8FA</color>
+    <color name="colorAccent">#5AC8FA</color>
+    <!--透明-->
+    <color name="transparent">#00000000</color>
+    <!--字体颜色灰色-->
+    <color name="txt_gray">#878787</color>
+
+    <color name="setting_fragment_background">#ccc</color>
+
+    <!--用户名的字体-->
+    <color name="username_sex_male_color">#5AC8FA</color>
+    <color name="username_sex_female_color">#e67596</color>
+
+    <color name="common_bg">#fcfcfc</color>
+    <color name="color_99">#999999</color>
+    <color name="color_line">#dadada</color>
+    <color name="color_chat_send_status">#818181</color>
+    <color name="color_msg_system_time_bg">#20000000</color>
+    <color name="color_1e1e1e">#1e1e1e</color>
+    <color name="color_b4">#b4b4b4</color>
+
+    <color name="base_color_text_black">#3e3e39</color>
+    <color name="color_emote_divder">#ffa1a1a1</color>
+    <color name="base_color_text_white">#ffffff</color>
+</resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:scrollbars="none"
+    app:behavior_overlapTop="30dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="/ResourceType: Failure getting entry for 0x01080270 (t=7 e=624) (error -75)
+W/ResourceType: Failure getting entry for 0x010803ff (t=7 e=1023) (error -75)
+W/ResourceType: Failure getting entry for 0x010803dc (t=7 e=988) (error -75)
+W/ResourceType: Failure getting entry for 0x010803f7 (t=7 e=1015) (error -75)
+W/ResourceType: Failure getting entry for 0x01080096 (t=7 e=150) (error -75)
+W/ResourceType: Failure getting entry for 0x0108035a (t=7 e=858) (error -75)
+W/ResourceType: Failure getting entry for 0x0108035e (t=7 e=862) (error -75)
+    /ResourceType: Failure getting entry for 0x01080270 (t=7 e=624) (error -75)
+    W/ResourceType: Failure getting entry for 0x010803ff (t=7 e=1023) (error -75)
+    W/ResourceType: Failure getting entry for 0x010803dc (t=7 e=988) (error -75)
+    W/ResourceType: Failure getting entry for 0x010803f7 (t=7 e=1015) (error -75)
+    W/ResourceType: Failure getting entry for 0x01080096 (t=7 e=150) (error -75)
+    W/ResourceType: Failure getting entry for 0x0108035a (t=7 e=858) (error -75)
+    W/ResourceType: Failure getting entry for 0x0108035e (t=7 e=862) (error -75)"
+        />
+</android.support.v4.widget.NestedScrollView>

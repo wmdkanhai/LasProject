@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="xm.lasproject">
+    !--允许联网 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 获取GSM（2g）、WCDMA（联通3g）等网络状态的信息 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 获取wifi网络状态的信息 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- 保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- 获取sd卡写的权限，用于文件上传和下载 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 允许读取手机状态 用于创建BmobInstallation -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <!-- 摄像头 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 录音 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- 通知震动 -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application
+        android:name=".app.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".presentation.activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".presentation.activity.ChatActivity">
+        </activity>
+        <activity android:name=".presentation.activity.MainActivity">
+        </activity>
+        <activity
+            android:name=".presentation.activity.LoginActivity"
+            android:label="@string/title_activity_login">
+        </activity>
+        <activity android:name=".presentation.activity.SignUpActivity">
+        </activity>
+        <activity android:name=".presentation.activity.AddRecordActivity">
+        </activity>
+        <activity android:name=".presentation.activity.AccountActivity">
+        </activity>
+        <activity android:name=".presentation.activity.MyMessageActivity">
+        </activity>
+        <activity android:name=".presentation.activity.ChangePassword">
+        </activity>
+        <activity android:name=".presentation.activity.RetrievePassword">
+        </activity>
+        <activity android:name=".presentation.activity.CommunitySearchActivity">
+        </activity>
+        <activity android:name=".presentation.activity.CommunityListActivity">
+        </activity>
+        <activity android:name=".presentation.activity.CommunityDetailsActivity">
+        </activity>
+        <activity android:name=".presentation.activity.CommunityAddActivity">
+        </activity>
+        <activity android:name=".presentation.activity.InviteFriendActivity">
+        </activity>
+
+        <!-- bmobim start -->
+        <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver">
+            <intent-filter>
+                <action android:name="cn.bmob.action.RECONNECT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="cn.bmob.newim.core.service.BmobIMService"
+            android:process=":bmobcore"/>
+        <service
+            android:name="cn.bmob.newim.core.service.NotifyService"
+            android:process=":bmobcore"/>
+        <service android:name="cn.bmob.newim.core.service.ReConnectService"/>
+        <service android:name="cn.bmob.newim.core.service.HeartBeatService"/>
+
+        <!-- 设置bmob appkey -->
+        <meta-data
+            android:name="Bmob_APP_KEY"
+            android:value="8dbaea8caa902586448121ce6313ab08"/>
+        <!-- bmobim end -->
+
+        <activity android:name=".presentation.activity.NewFriendActivity">
+        </activity>
+        <activity android:name=".presentation.activity.Chat2Activity">
+        </activity>
+        <activity android:name=".presentation.activity.RecordDetailsActivity" android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+    </application>
+
+</manifest>
