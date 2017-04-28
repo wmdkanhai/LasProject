@@ -56,25 +56,28 @@ public class AddRecordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_submit:
-                Record record = new Record();
-                User user = BmobUser.getCurrentUser(AddRecordActivity.this, User.class);
-                record.setUsername(user.getUsername());
-                record.setUserObjectId(user.getObjectId());
-                record.setUserPhotoUrl(user.getPhoto().getFileUrl(AddRecordActivity.this));
-                record.setRecordContent(mEtContent.getText().toString());
-                record.save(AddRecordActivity.this, new SaveListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(AddRecordActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+                if (mEtContent.getText().toString().isEmpty()){
+                    Toast.makeText(this, "请输入内容", Toast.LENGTH_SHORT).show();
+                }else {
+                    Record record = new Record();
+                    User user = BmobUser.getCurrentUser(AddRecordActivity.this, User.class);
+                    record.setUsername(user.getUsername());
+                    record.setUserObjectId(user.getObjectId());
+                    record.setUserPhotoUrl(user.getPhoto().getFileUrl(AddRecordActivity.this));
+                    record.setRecordContent(mEtContent.getText().toString());
+                    record.save(AddRecordActivity.this, new SaveListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(AddRecordActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
 
-                    @Override
-                    public void onFailure(int i, String s) {
-                        Toast.makeText(AddRecordActivity.this, "出错了："+s, Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+                        @Override
+                        public void onFailure(int i, String s) {
+                            Toast.makeText(AddRecordActivity.this, "出错了："+s, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
                 
         }

@@ -8,9 +8,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,6 +58,8 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
     EditText mEditMsg;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.btn_send)
+    Button mBtnSend;
     private CommunityList.ResultsBean mResultsBean;
     private CommunityDetailsPresenter mCommunityDetailsPresenter;
     private CommentInfo mCommentInfo;
@@ -118,6 +124,48 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
                 finish();
             }
         });
+
+        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh();
+
+        showLoading();
+
+        setEditMsgListenter();
+    }
+
+    /**
+     * 给输入框设置监听事件，在用户有输入的情况下，更改发送图片的颜色
+     */
+    private void setEditMsgListenter() {
+        mEditMsg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!TextUtils.isEmpty(s)) {
+                    mBtnSend.setBackgroundResource(R.drawable.send);
+                }else {
+                    mBtnSend.setBackgroundResource(R.drawable.btn_chat_send_selector);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void swipeRefresh() {
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mCommunityDetailsPresenter.showComment(mRecordId);
+            }
+        });
     }
 
     /**
@@ -141,6 +189,7 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
 
             mCommunityDetailsPresenter.addComment(mCommentInfo);
 
+            mEditMsg.setText("");
         }
 
     }
@@ -160,11 +209,11 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_share:
-
-                break;
+//            case R.id.action_share:
+//
+//                break;
             case R.id.action_add:
-
+                Toast.makeText(this, "请在下边输入框进行评论", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -175,12 +224,12 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
 
     @Override
     public void showLoading() {
-
+        mSwipeRefresh.setRefreshing(true);
     }
 
     @Override
     public void hideLoading() {
-
+        mSwipeRefresh.setRefreshing(false);
     }
 
     @Override
@@ -196,10 +245,10 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
     @Override
     public void getCommentInfoSuccess(CommentMode response) {
         List<CommentMode.ResultsBean> commentList = new ArrayList<>();
-        if (response.getResults().isEmpty()){
+        if (response.getResults().isEmpty()) {
             //没有数据
 
-        }else {
+        } else {
             for (CommentMode.ResultsBean c : response.getResults()) {
                 commentList.add(c);
             }

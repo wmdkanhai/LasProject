@@ -73,32 +73,36 @@ public class CommunityAddActivity extends AppCompatActivity {
     }
 
     private void saveCommunityTheme() {
-//        Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
-        CommunityTheme communityTheme = new CommunityTheme();
-        communityTheme.setUsername(mSharedPreferences.getString("username",""));
-        communityTheme.setUserObjectId(mSharedPreferences.getString("objectId",""));
-        communityTheme.setSex("男");
-        communityTheme.setModeType(mModeType);
-        communityTheme.setTitle(mEtTitle.getText().toString());
-        communityTheme.setContent(mEtContent.getText().toString());
+//        Toast.makeText(this, "添加成功Toast.LENGTH_SHORT).show();
+        if (mEtTitle.getText().toString().isEmpty() || mEtContent.getText().toString().isEmpty()){
+            Toast.makeText(this, "标题或者内容不能为空", Toast.LENGTH_SHORT).show();
+        }else {
+            CommunityTheme communityTheme = new CommunityTheme();
+            communityTheme.setUsername(mSharedPreferences.getString("username",""));
+            communityTheme.setUserObjectId(mSharedPreferences.getString("objectId",""));
+            communityTheme.setSex("男");
+            communityTheme.setModeType(mModeType);
+            communityTheme.setTitle(mEtTitle.getText().toString());
+            communityTheme.setContent(mEtContent.getText().toString());
 //        communityTheme.setPicture();
-        //获取当前系统的时间
-        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String date = sDateFormat.format(new java.util.Date());
-        communityTheme.setTime(date);
+            //获取当前系统的时间
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String date = sDateFormat.format(new java.util.Date());
+            communityTheme.setTime(date);
 
-        communityTheme.save(CommunityAddActivity.this, new SaveListener() {
-            @Override
-            public void onSuccess() {
-                finish();
-                Toast.makeText(CommunityAddActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
-            }
+            communityTheme.save(CommunityAddActivity.this, new SaveListener() {
+                @Override
+                public void onSuccess() {
+                    finish();
+                    Toast.makeText(CommunityAddActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onFailure(int i, String s) {
-                Toast.makeText(CommunityAddActivity.this, "提交失败"+s, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(int i, String s) {
+                    Toast.makeText(CommunityAddActivity.this, "提交失败"+s, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
 

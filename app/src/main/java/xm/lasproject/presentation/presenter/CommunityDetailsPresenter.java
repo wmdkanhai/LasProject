@@ -44,10 +44,11 @@ public class CommunityDetailsPresenter implements ICommunityDetailsContract.Pres
 
 
     @Override
-    public void addComment(CommentInfo commentInfo) {
+    public void addComment(final CommentInfo commentInfo) {
         commentInfo.save(mContext, new SaveListener() {
             @Override
             public void onSuccess() {
+                showComment(commentInfo.getRecordId());
                 mView.success("成功添加评论");
             }
 

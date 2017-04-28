@@ -55,8 +55,6 @@ public class RecordPresenter implements IRecordContract.Presenter {
                                  mView.hideLoading();
                              }
                          }
-
-
                 );
     }
 }

@@ -77,7 +77,10 @@ public class CommunityListActivity extends AppCompatActivity implements ICommuni
         });
 
         showLoading();
+    }
 
+    private void refreshData() {
+        mCommunityListPresenter.getCommunityList(mModeType);
     }
 
     @Override
@@ -89,20 +92,25 @@ public class CommunityListActivity extends AppCompatActivity implements ICommuni
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_search:
-
-                break;
+//            case R.id.action_search:
+//
+//                break;
             case R.id.action_add:
                 Intent intent = new Intent();
                 intent.putExtra("modeType", mModeType);
                 intent.setClass(this, CommunityAddActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,0);
                 break;
             default:
                 break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        refreshData();
     }
 
     @Override
