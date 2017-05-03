@@ -184,7 +184,7 @@ public class CommunityDetailsActivity extends AppCompatActivity implements IComm
             mCommentInfo.setRecordId(mRecordId);
             mCommentInfo.setCommentUserId(user.getObjectId());
             mCommentInfo.setCommentUsername(user.getUsername());
-            mCommentInfo.setCommentUserPhoto(user.getPhoto().getFileUrl(this));
+            mCommentInfo.setCommentUserPhoto(user.getPhoto());
             mCommentInfo.setCommentContent(mEditMsg.getText().toString());
 
             mCommunityDetailsPresenter.addComment(mCommentInfo);

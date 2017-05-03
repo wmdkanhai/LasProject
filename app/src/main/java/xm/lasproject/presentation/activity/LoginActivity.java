@@ -118,6 +118,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginContract.V
         mEditor.putString("loveTime", user.getLoveTime());
         mEditor.putString("birthday", user.getUsername());
         mEditor.putString("sex", user.getSex());
+        mEditor.putString("photo", user.getPhoto());
         mEditor.putString("birthday", user.getBirthday());
         mEditor.putString("pairing", user.getPairing());
         mEditor.putString("pairingInfo", user.getPairingInfo());

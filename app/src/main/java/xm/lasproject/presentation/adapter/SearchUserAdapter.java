@@ -41,8 +41,8 @@ public class SearchUserAdapter extends BaseRecyclerAdapter<User> {
     public void bindData(RecyclerViewHolder holder, int position, User item) {
         final ImageView imageView = holder.getImageView(R.id.imageView);
         if (data.get(position).getPhoto() != null) {
-            final BmobFile photo = data.get(position).getPhoto();
-            Glide.with(mContext).load(photo.getFileUrl(mContext)).into(imageView);
+            final String photo = data.get(position).getPhoto();
+            Glide.with(mContext).load(photo).into(imageView);
         }else {
             imageView.setImageResource(R.mipmap.ic_launcher);
         }

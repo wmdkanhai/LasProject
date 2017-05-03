@@ -1,7 +1,6 @@
 package xm.lasproject.bean;
 
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BmobFile;
 
 /**
  * <pre>
@@ -21,14 +20,14 @@ public class User extends BmobUser {
     private String pairingInfo;//配对信息
     private String pairingTime;//配对时间
     private String sex;//性别
-    private BmobFile photo;//头像
+    private String photo;//头像
     private String loveTime;//恋爱日期
 
     public User() {
     }
 
 
-    public User(String nickName, String pairing, String birthday, String registTime, String pairingInfo, String pairingTime, String sex, BmobFile photo, String loveTime) {
+    public User(String nickName, String pairing, String birthday, String registTime, String pairingInfo, String pairingTime, String sex, String photo, String loveTime) {
         this.nickName = nickName;
         this.birthday = birthday;
         this.pairing = pairing;
@@ -88,11 +87,11 @@ public class User extends BmobUser {
         this.sex = sex;
     }
 
-    public BmobFile getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(BmobFile photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

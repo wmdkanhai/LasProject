@@ -136,7 +136,6 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
             refreshData();
-
     }
 
     private void refreshData() {

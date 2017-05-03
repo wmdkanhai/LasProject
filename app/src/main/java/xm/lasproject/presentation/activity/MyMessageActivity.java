@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +27,13 @@ import com.bumptech.glide.Glide;
 import org.feezu.liuli.timeselector.TimeSelector;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -69,6 +74,9 @@ public class MyMessageActivity extends AppCompatActivity {
     private String mPairing;
     private String mSex;
 
+    private String mFilePath;
+    private Uri mImageUri1;
+    private File mFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,36 +108,53 @@ public class MyMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MyMessageActivity.this, "点击了我的头像", Toast.LENGTH_SHORT).show();
-                String path = Environment.getExternalStorageDirectory() + "/a.jpg";
-                Log.e(path, "path: " + path);
-                File file1 = new File(path);
-                BmobFile file = new BmobFile(file1);
+//                String path = Environment.getExternalStorageDirectory() + "/a.jpg";
+//                Log.e(path, "path: " + path);
+//                File file1 = new File(path);
+//                BmobFile file = new BmobFile(file1);
+//
+//                file.uploadblock(MyMessageActivity.this, new UploadFileListener() {
+//                    @Override
+//                    public void onSuccess() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(int i, String s) {
+//
+//                    }
+//                });
+//                mUser.setPhoto(file);
+//                if (mObjectId != "") {
+//                    mUser.update(MyMessageActivity.this, mObjectId, new UpdateListener() {
+//                        @Override
+//                        public void onSuccess() {
+//                            Log.i("bmob", "更新成功");
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int i, String s) {
+//                            Log.i("bmob", "更新失败" + s);
+//                        }
+//                    });
+//                }
 
-                file.uploadblock(MyMessageActivity.this, new UploadFileListener() {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MyMessageActivity.this);
+                builder.setTitle("这里是标题");
+                builder.setIcon(R.mipmap.ic_launcher);
+                final String[] itemString = {"拍照", "相册"};
+                builder.setItems(itemString, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onFailure(int i, String s) {
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e("----", "onClick: " + which);
+                        if (0 == which) {
+                            takePhoto();
+                        } else {
+                            openAlbum();
+                        }
                     }
                 });
-                mUser.setPhoto(file);
-                if (mObjectId != "") {
-                    mUser.update(MyMessageActivity.this, mObjectId, new UpdateListener() {
-                        @Override
-                        public void onSuccess() {
-                            Log.i("bmob", "更新成功");
-                        }
-
-                        @Override
-                        public void onFailure(int i, String s) {
-                            Log.i("bmob", "更新失败" + s);
-                        }
-                    });
-                }
+                builder.show();
             }
         });
 
@@ -253,6 +278,8 @@ public class MyMessageActivity extends AppCompatActivity {
 
         String loveTime = mSharedPreferences.getString("loveTime", "请设置");
         String birthday = mSharedPreferences.getString("birthday", "请设置");
+        String photo = mSharedPreferences.getString("photo", "");
+
         mSex = mSharedPreferences.getString("sex", "请设置");
         mTvSex.setText(mSex);
 
@@ -260,6 +287,12 @@ public class MyMessageActivity extends AppCompatActivity {
         mTvTime.setText(loveTime);
         mTvBirthday.setText(birthday);
         mTvNickName.setText(mNickName);
+
+        if ("".equals(photo)){
+            Glide.with(this).load(R.mipmap.ic_launcher).into(mImageView);
+        }else {
+            Glide.with(this).load(photo).into(mImageView);
+        }
 
         //获取当前系统的时间
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -348,10 +381,7 @@ public class MyMessageActivity extends AppCompatActivity {
             }
         });
 //        String path = "http://bmob-cdn-10014.b0.upaiyun.com/2017/03/28/905a5c21401a4278800367dbbd182e00.jpg";
-        String path = Environment.getExternalStorageDirectory() + "/a.jpg";
-        Glide.with(this).load(path)
-                .placeholder(R.mipmap.ic_launcher)//添加占位图
-                .into(mImageView);
+//        String path = Environment.getExternalStorageDirectory() + "/a.jpg";
 
     }
 
@@ -377,5 +407,91 @@ public class MyMessageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void takePhoto() {
+        mFile = new File(Environment.getExternalStorageDirectory(), "a.jpg");
+        if (mFile.exists()){
+            mFile.delete();
+        }
+        try {
+            mFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mImageUri1 = Uri.fromFile(mFile);
+        mFilePath = mFile.getPath();
+
+        //启动相机程序
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri1);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+        startActivityForResult(intent, 100);
+    }
+
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, 101); // 打开相册
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        } else {
+            switch (requestCode) {
+                case 100:
+                    BmobFile icon = new BmobFile(new File(mFilePath));
+                    Glide.with(MyMessageActivity.this).load(mFile).into(mImageView);
+                    updata(icon);
+                    break;
+                case 101:
+                    Uri originalUri = data.getData();//获取图片uri
+                    //以下方法将获取的uri转为String类型哦。
+                    String[] imgs1 = {MediaStore.Images.Media.DATA};//将图片URI转换成存储路径
+                    Cursor cursor = this.managedQuery(originalUri, imgs1, null, null, null);
+                    int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToFirst();
+                    String img_url = cursor.getString(index);
+                    Glide.with(MyMessageActivity.this).load(img_url).into(mImageView);
+                    final BmobFile icon2 = new BmobFile(new File(img_url));
+                    updata(icon2);
+                    break;
+            }
+        }
+    }
+
+    private void updata(final BmobFile icon) {
+        icon.uploadblock(this, new UploadFileListener() {
+            @Override
+            public void onSuccess() {
+                final User user = BmobUser.getCurrentUser(MyMessageActivity.this, User.class);
+                Log.e("---", "onSuccess: "+user.getObjectId());
+                user.setPhoto(icon.getFileUrl(MyMessageActivity.this));
+                user.update(MyMessageActivity.this,user.getObjectId(), new UpdateListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("--", "done: "+"修改成功");
+                        mEditor.putString("photo", user.getPhoto());
+                        //提交当前数据
+                        mEditor.apply();
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+
+            }
+        });
+    }
 
 }

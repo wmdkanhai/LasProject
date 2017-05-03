@@ -63,7 +63,7 @@ public class AddRecordActivity extends AppCompatActivity {
                     User user = BmobUser.getCurrentUser(AddRecordActivity.this, User.class);
                     record.setUsername(user.getUsername());
                     record.setUserObjectId(user.getObjectId());
-                    record.setUserPhotoUrl(user.getPhoto().getFileUrl(AddRecordActivity.this));
+                    record.setUserPhotoUrl(user.getPhoto());
                     record.setRecordContent(mEtContent.getText().toString());
                     record.save(AddRecordActivity.this, new SaveListener() {
                         @Override

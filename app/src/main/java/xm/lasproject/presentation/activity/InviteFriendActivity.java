@@ -137,7 +137,7 @@ public class InviteFriendActivity extends AppCompatActivity implements IInviteFr
                 @Override
                 public void onItemClick(View itemView, int pos) {
                     //构造聊天方的用户信息:传入用户id、用户名和用户头像三个参数
-                    String fileUrl = list.get(pos).getPhoto().getFileUrl(InviteFriendActivity.this);
+                    String fileUrl = list.get(pos).getPhoto();
                     if (fileUrl.equals("")){
                         fileUrl = "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/logo_redBlue.png";
                     }
