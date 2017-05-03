@@ -408,6 +408,9 @@ public class MyMessageActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 照相
+     */
     private void takePhoto() {
         mFile = new File(Environment.getExternalStorageDirectory(), "a.jpg");
         if (mFile.exists()){
@@ -429,10 +432,13 @@ public class MyMessageActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 打开相册选择头像
+     */
     private void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
-        startActivityForResult(intent, 101); // 打开相册
+        startActivityForResult(intent, 101);
     }
 
     @Override
@@ -462,17 +468,19 @@ public class MyMessageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 更新头像到Bmob
+     * @param icon
+     */
     private void updata(final BmobFile icon) {
         icon.uploadblock(this, new UploadFileListener() {
             @Override
             public void onSuccess() {
                 final User user = BmobUser.getCurrentUser(MyMessageActivity.this, User.class);
-                Log.e("---", "onSuccess: "+user.getObjectId());
                 user.setPhoto(icon.getFileUrl(MyMessageActivity.this));
                 user.update(MyMessageActivity.this,user.getObjectId(), new UpdateListener() {
                     @Override
                     public void onSuccess() {
-                        Log.e("--", "done: "+"修改成功");
                         mEditor.putString("photo", user.getPhoto());
                         //提交当前数据
                         mEditor.apply();
@@ -483,8 +491,6 @@ public class MyMessageActivity extends AppCompatActivity {
 
                     }
                 });
-
-
             }
 
             @Override
@@ -493,5 +499,4 @@ public class MyMessageActivity extends AppCompatActivity {
             }
         });
     }
-
 }
