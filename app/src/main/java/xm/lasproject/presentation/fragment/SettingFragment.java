@@ -20,7 +20,7 @@ import xm.lasproject.presentation.activity.MyMessageActivity;
  *     author : xm
  *     e-mail : wmdkanhai@qq.com
  *     time   : 2017/03/22
- *     desc   : xxx描述
+ *     desc   : 设置界面
  *     version: 1.0
  * </pre>
  */

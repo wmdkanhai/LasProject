@@ -103,4 +103,14 @@ public abstract class Conversation implements Serializable,Comparable{
         }
     }
 
+    @Override
+    public String toString() {
+        return "Conversation{" +
+                "cId='" + cId + '\'' +
+                ", cType=" + cType +
+                ", cName='" + cName + '\'' +
+                '}';
+    }
+
+
 }

@@ -1,7 +1,6 @@
 package xm.lasproject.presentation.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -45,7 +44,7 @@ public class RecordListAdapter extends BaseRecyclerAdapter<RecordMode.ResultsBea
 
         ImageView imageView = holder.getImageView(R.id.imageView);
         Glide.with(mContext).load(data.get(position).getUserPhotoUrl()).into(imageView);
-        Log.e("-----", "bindData: "+data.get(position).getRecordContent() );
+//        Log.e("-----", "bindData: "+data.get(position).getRecordContent() );
         holder.setText(R.id.tv_content,data.get(position).getRecordContent());
         String createdAt = data.get(position).getCreatedAt();
         //获取到日期后，格式化时间，2017-03-14

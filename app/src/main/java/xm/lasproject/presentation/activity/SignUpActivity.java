@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -56,6 +57,9 @@ public class SignUpActivity extends AppCompatActivity implements ISignUpContract
                 finish();
             }
         });
+
+        EditText editText = (EditText) findViewById(R.id.et_new_password);
+        Button btn_sign = (Button) findViewById(R.id.btn_sign_up);
     }
 
     /**

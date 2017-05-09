@@ -1,15 +1,15 @@
 package xm.lasproject.presentation.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +24,6 @@ import xm.lasproject.bean.Conversation;
 import xm.lasproject.bean.NewFriend;
 import xm.lasproject.bean.NewFriendConversation;
 import xm.lasproject.bean.NewFriendManager;
-import xm.lasproject.presentation.adapter.BaseRecyclerAdapter;
-import xm.lasproject.presentation.adapter.ConversationAdapter;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -70,23 +68,24 @@ public class ChatActivity extends AppCompatActivity {
 
     private void initData() {
 //        query();
-        ConversationAdapter conversationAdapter = new ConversationAdapter(this, getConversations());
-        mRecyclerView.setAdapter(conversationAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        conversationAdapter.notifyDataSetChanged();
-        conversationAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int pos) {
-                Toast.makeText(ChatActivity.this, "pos:" + pos, Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(ChatActivity.this, NewFriendActivity.class));
-            }
-        });
+        List<Conversation> conversations = getConversations(ChatActivity.this);
+//        ConversationAdapter conversationAdapter = new ConversationAdapter(ChatActivity.this, conversations);
+//        mRecyclerView.setAdapter(conversationAdapter);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//        conversationAdapter.notifyDataSetChanged();
+//        conversationAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View itemView, int pos) {
+//                Toast.makeText(ChatActivity.this, "pos:" + pos, Toast.LENGTH_SHORT).show();
+//                startActivity(new Intent(ChatActivity.this, NewFriendActivity.class));
+//            }
+//        });
 
     }
 
     private void query() {
-        List<Conversation> conversations = getConversations();
+        List<Conversation> conversations = getConversations(ChatActivity.this);
     }
 
 
@@ -95,7 +94,7 @@ public class ChatActivity extends AppCompatActivity {
      *
      * @return
      */
-    private List<Conversation> getConversations() {
+    private List<Conversation> getConversations(Context context) {
         //添加会话
         List<Conversation> conversationList = new ArrayList<>();
         conversationList.clear();
@@ -112,7 +111,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
         //添加新朋友会话-获取好友请求表中最新一条记录
-        List<NewFriend> friends = NewFriendManager.getInstance(this).getAllNewFriend();
+        List<NewFriend> friends = NewFriendManager.getInstance(getApplicationContext()).getAllNewFriend();
         if (friends != null && friends.size() > 0) {
             conversationList.add(new NewFriendConversation(friends.get(0)));
         }
@@ -125,5 +124,17 @@ public class ChatActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(this, MainActivity.class));
+    }
+
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }

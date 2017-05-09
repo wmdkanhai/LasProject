@@ -132,13 +132,11 @@ public class InviteFriendActivity extends AppCompatActivity implements IInviteFr
 
             //点击item的时候的事件---》发出添加好友请求
             mSearchUserAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
-
-
                 @Override
                 public void onItemClick(View itemView, int pos) {
                     //构造聊天方的用户信息:传入用户id、用户名和用户头像三个参数
                     String fileUrl = list.get(pos).getPhoto();
-                    if (fileUrl.equals("")){
+                    if (fileUrl == null){
                         fileUrl = "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/logo_redBlue.png";
                     }
                     String objectId = list.get(pos).getObjectId();
@@ -154,7 +152,7 @@ public class InviteFriendActivity extends AppCompatActivity implements IInviteFr
                             String sexById = user.getSex();
                             if (sex.equals(sexById)){
                                 Toast.makeText(InviteFriendActivity.this, "性别一致啊！！！", Toast.LENGTH_SHORT).show();
-                            }else {
+                            }else{
                                 sendAddFriendMessage(info);
                             }
                         }

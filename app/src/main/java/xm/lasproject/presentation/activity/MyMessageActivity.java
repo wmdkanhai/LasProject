@@ -291,7 +291,7 @@ public class MyMessageActivity extends AppCompatActivity {
         if ("".equals(photo)){
             Glide.with(this).load(R.mipmap.ic_launcher).into(mImageView);
         }else {
-            Glide.with(this).load(photo).into(mImageView);
+            Glide.with(this).load(photo).placeholder(R.mipmap.ic_launcher).into(mImageView);
         }
 
         //获取当前系统的时间
@@ -396,10 +396,23 @@ public class MyMessageActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_add:
                 mPairing = mSharedPreferences.getString("pairing", "");
-                if ("0".equals(mPairing)) {
-                    startActivity(new Intent(this, InviteFriendActivity.class));
-                } else {
-                    Toast.makeText(this, "您已经添加过了", Toast.LENGTH_SHORT).show();
+                String sex = mSharedPreferences.getString("sex","");
+                String photo = mSharedPreferences.getString("photo","");
+                String birthday = mSharedPreferences.getString("birthday","");
+                String nickName = mSharedPreferences.getString("nickName","");
+                String loveTime = mSharedPreferences.getString("loveTime","");
+                if ("".equals(sex)
+                        || "".equals(birthday)
+                        || "".equals(nickName)
+                        || "".equals(loveTime)
+                        ){
+                    Toast.makeText(this, "请完善你的信息", Toast.LENGTH_SHORT).show();
+                }else {
+                    if ("0".equals(mPairing)) {
+                        startActivity(new Intent(this, InviteFriendActivity.class));
+                    } else {
+                        Toast.makeText(this, "您已经添加过了", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
 
