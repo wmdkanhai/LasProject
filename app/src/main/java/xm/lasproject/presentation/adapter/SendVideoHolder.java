@@ -21,9 +21,9 @@ import cn.bmob.v3.exception.BmobException;
 import xm.lasproject.R;
 
 /**
- * 发送的文本类型
+ * 发送的视频类型---这是举个例子，并没有展示出视频缩略图等信息，开发者可自行实现
  */
-public class SendTextHolder extends BaseViewHolder implements View.OnClickListener, View.OnLongClickListener {
+public class SendVideoHolder extends BaseViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
     @BindView(R.id.tv_time)
     TextView tv_time;
@@ -40,10 +40,7 @@ public class SendTextHolder extends BaseViewHolder implements View.OnClickListen
 
     BmobIMConversation c;
     Context mContext;
-
-
-
-    public SendTextHolder(Context context, ViewGroup root, BmobIMConversation c, OnRecyclerViewListener listener) {
+    public SendVideoHolder(Context context, ViewGroup root, BmobIMConversation c, OnRecyclerViewListener listener) {
         super(context, root, R.layout.item_chat_sent_message, listener);
         this.c = c;
         this.mContext = context;
@@ -56,9 +53,10 @@ public class SendTextHolder extends BaseViewHolder implements View.OnClickListen
         final BmobIMUserInfo info = message.getBmobIMUserInfo();
         Glide.with(mContext).load(info.getAvatar()).into(iv_avatar);
 //        ImageLoaderFactory.getLoader().loadAvator(iv_avatar, info != null ? info.getAvatar() : null, R.mipmap.head);
+
         String time = dateFormat.format(message.getCreateTime());
         String content = message.getContent();
-        tv_message.setText(content);
+        tv_message.setText("发送的视频文件：" + content);
         tv_time.setText(time);
 
         int status = message.getSendStatus();

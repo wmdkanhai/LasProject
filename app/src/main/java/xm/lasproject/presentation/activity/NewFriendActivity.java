@@ -31,7 +31,7 @@ public class NewFriendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_friend);
         ButterKnife.bind(this);
-//批量更新未读未认证的消息为已读状态
+        //批量更新未读未认证的消息为已读状态
         NewFriendManager.getInstance(this).updateBatchStatus();
         mAllNewFriend = NewFriendManager.getInstance(this).getAllNewFriend();
         initView();

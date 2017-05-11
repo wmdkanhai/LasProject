@@ -1,5 +1,6 @@
 package xm.lasproject.presentation.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,8 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.core.ConnectionStatus;
 import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConnectStatusChangeListener;
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(String uid, BmobException e) {
                 if (e == null) {
-                    Log.e("---","connect success");
+                    Log.e("---", "connect success");
                     //服务器连接成功就发送一个更新事件，同步更新会话及主页的小红点
                     EventBus.getDefault().post(new RefreshEvent());
                 } else {
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
             @Override
             public void onChange(ConnectionStatus status) {
-                Toast.makeText(MainActivity.this, ""+ status.getMsg(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "" + status.getMsg(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,46 +102,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void changeFragment(int checkedId) {
+        String pairing = BmobUser.getCurrentUser(this, User.class).getPairing();
+
+        if (checkedId != R.id.rb_1) {
+            mFragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            Fragment fragment = getInstanceByIndex(checkedId);
+            transaction.replace(R.id.rl_main, fragment).commit();
+        } else {
+            if (!"0".equals(pairing)){
+                String pairingInfo = BmobUser.getCurrentUser(this, User.class).getPairingInfo();
+                String[] split = pairingInfo.split(",");
+                String paringId = split[0];
+                String paringUsername = split[1];
+                String paringFileUrl = split[2];
+                BmobIMUserInfo info = new BmobIMUserInfo(paringId, paringUsername, paringFileUrl);
+                BmobIMConversation c = BmobIM.getInstance().startPrivateConversation(info, false, null);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("c", c);
+                Intent intent = new Intent();
+                intent.putExtra(getPackageName(), bundle);
+                intent.setClass(this, Chat2Activity.class);
+                startActivity(intent);
+            }else {
+                mFragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                Fragment fragment = getInstanceByIndex(checkedId);
+                transaction.replace(R.id.rl_main, fragment).commit();
+            }
+
+            }
+//            finish();
+    }
 //    private void changeFragment(int checkedId) {
-//        if (checkedId != R.id.rb_1) {
-//            mFragmentManager = getSupportFragmentManager();
-//            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-//            Fragment fragment = getInstanceByIndex(checkedId);
-//            transaction.replace(R.id.rl_main, fragment).commit();
-//        } else {
-//            String pairing = mUser.getPairing();
-//            if ("0".equals(pairing)) {
-//                startActivity(new Intent(this, ChatActivity.class));
-//            }else {
-//                String pairingInfo = mUser.getPairingInfo();
-//                String[] split = pairingInfo.split(",");
-//                String paringId = split[0];
-//                String paringUsername = split[1];
-//                String paringFileUrl = split[2];
-//                BmobIMUserInfo info = new BmobIMUserInfo(paringId,paringUsername,paringFileUrl);
-//                BmobIMConversation c = BmobIM.getInstance().startPrivateConversation(info,false,null);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("c", c);
-//                Intent intent = new Intent();
-//                intent.putExtra(getPackageName(), bundle);
-//                intent.setClass(this,Chat2Activity.class);
-//                startActivity(intent);
-//            }
-////            finish();
-//        }
+//
+//
+////    if (checkedId == R.id.rb_1){
+////        startActivity(new Intent(MainActivity.this,ChatActivity.class));
+////    }else {
+//        mFragmentManager = getSupportFragmentManager();
+//        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+//        Fragment fragment = getInstanceByIndex(checkedId);
+//        transaction.replace(R.id.rl_main, fragment).commit();
+////    }
 //    }
-private void changeFragment(int checkedId) {
-
-
-//    if (checkedId == R.id.rb_1){
-//        startActivity(new Intent(MainActivity.this,ChatActivity.class));
-//    }else {
-        mFragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        Fragment fragment = getInstanceByIndex(checkedId);
-        transaction.replace(R.id.rl_main, fragment).commit();
-//    }
-}
 
     public Fragment getInstanceByIndex(int resId) {
         Fragment fragment = null;
@@ -177,7 +185,7 @@ private void changeFragment(int checkedId) {
             mRecordFragment = RecordFragment.newInstance();
         }
 
-        if (mConversationFragment == null){
+        if (mConversationFragment == null) {
 //            mConversationFragment = new ConversationFragment(MainActivity.this);
             mConversationFragment = ConversationFragment.newInstance();
         }

@@ -1,6 +1,7 @@
 package xm.lasproject.presentation.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,9 +16,12 @@ import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.listener.MessageSendListener;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.GetListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import xm.lasproject.R;
 import xm.lasproject.bean.AgreeAddFriendMessage;
 import xm.lasproject.bean.Friend;
@@ -116,7 +120,7 @@ public class NewFriendAdapter extends BaseRecyclerAdapter<NewFriend> {
         User user = new User();
         user.setObjectId(add.getUid());
         Friend friend = new Friend();
-        User user1 = BmobUser.getCurrentUser(mContext,User.class);
+        User user1 = BmobUser.getCurrentUser(mContext, User.class);
         friend.setUser(user1);
         friend.setFriendUser(user);
 
@@ -147,13 +151,14 @@ public class NewFriendAdapter extends BaseRecyclerAdapter<NewFriend> {
         BmobIMConversation conversation = BmobIMConversation.obtain(BmobIMClient.getInstance(), c);
         //而AgreeAddFriendMessage的isTransient设置为false，表明我希望在对方的会话数据库中保存该类型的消息
         AgreeAddFriendMessage msg = new AgreeAddFriendMessage();
-        User currentUser = BmobUser.getCurrentUser(mContext,User.class);
+        final User currentUser = BmobUser.getCurrentUser(mContext, User.class);
         msg.setContent("我通过了你的好友验证请求，我们可以开始聊天了!");//---这句话是直接存储到对方的消息表中的
         Map<String, Object> map = new HashMap<>();
         map.put("msg", currentUser.getUsername() + "同意添加你为好友");//显示在通知栏上面的内容
         map.put("uid", add.getUid());//发送者的uid-方便请求添加的发送方找到该条添加好友的请求
         map.put("time", add.getTime());//添加好友的请求时间
         msg.setExtraMap(map);
+
         conversation.sendMessage(msg, new MessageSendListener() {
             @Override
             public void done(BmobIMMessage msg, BmobException e) {
@@ -161,6 +166,60 @@ public class NewFriendAdapter extends BaseRecyclerAdapter<NewFriend> {
                     //修改本地的好友请求记录
                     NewFriendManager.getInstance(mContext).updateNewFriend(add, SystemVar.STATUS_VERIFIED);
 //                    listener.done();
+                    String Uid = add.getUid();
+                    Log.e("NewFriendAdapter", "Uid" + Uid);
+
+
+                    String objectId = BmobUser.getCurrentUser(mContext).getObjectId();
+                    Log.e("NewFriendAdapter", "当前用户的Uid" + objectId);
+
+                    final User currentUser = BmobUser.getCurrentUser(mContext, User.class);
+
+                    BmobQuery<User> query = new BmobQuery<User>();
+                    query.getObject(mContext, add.getUid(), new GetListener<User>() {
+                        @Override
+                        public void onSuccess(User user) {
+                            //同意请求后，修改配对信息
+                            //修改当前用户在数据库中的信息
+                            currentUser.setPairing("1");
+                            String pairingInfo = add.getUid() + "," + add.getName() + ","+user.getPhoto();
+                            currentUser.setPairingInfo(pairingInfo);
+                            currentUser.update(mContext, new UpdateListener() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.e("NewFriendAdapter", "当前用户的信息修改成功");
+                                }
+
+                                @Override
+                                public void onFailure(int i, String s) {
+
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onFailure(int i, String s) {
+
+                        }
+                    });
+
+//                    User user1 = new User();
+//                    user1.setPairing("1");
+//                    String pairingInfo1 = currentUser.getObjectId() + "," + currentUser.getUsername() + "," + currentUser.getPhoto();
+//                    user1.setPairingInfo(pairingInfo1);
+//                    user1.update(mContext, add.getUid(), new UpdateListener() {
+//                        @Override
+//                        public void onSuccess() {
+//                            Log.e("NewFriendAdapter", "新朋友的信息修改成功");
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int i, String s) {
+//                            Log.e("NewFriendAdapter", s);
+//                        }
+//                    });
+
                 } else {//发送失败
 //                    listener.onFailure(e.getErrorCode(), e.getMessage());
                 }

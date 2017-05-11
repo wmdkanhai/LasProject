@@ -1,5 +1,6 @@
 package xm.lasproject.presentation.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ import xm.lasproject.bean.NewFriend;
 import xm.lasproject.bean.NewFriendConversation;
 import xm.lasproject.bean.NewFriendManager;
 import xm.lasproject.bean.PrivateConversation;
+import xm.lasproject.presentation.activity.NewFriendActivity;
 import xm.lasproject.presentation.contract.IMutlipleItem;
 import xm.lasproject.util.TimeUtil;
 
@@ -67,9 +69,6 @@ public class ConversationFragment extends Fragment {
     public ConversationFragment() {
     }
 
-//    public ConversationFragment(Context c) {
-//        this.mContext = c;
-//    }
 
     public static ConversationFragment newInstance() {
         return new ConversationFragment();
@@ -125,28 +124,6 @@ public class ConversationFragment extends Fragment {
             mSwipeRefresh.setRefreshing(false);
         }
 
-//        if (!conversations.isEmpty()) {
-//            Log.e("--", "getcName: " + conversations.get(0).getcName());
-//            Log.e("--", "getLastMessageTime: " + conversations.get(0).getLastMessageTime());
-//            Log.e("--", "getLastMessageContent: " + conversations.get(0).getLastMessageContent());
-//            Log.e("--", "getAvatar: " + conversations.get(0).getAvatar());
-//            Log.e("--", "getUnReadCount: " + conversations.get(0).getUnReadCount());
-//            mTvName.setText(conversations.get(0).getcName());
-////            mTvName.setText("hahhahah");
-////            mTvName.setText();
-////            Glide.with(getActivity()).load(conversations.get(0).getAvatar()).into(mIvRecentAvatar);
-////
-////            mTvRecentMsg.setText(conversations.get(0).getLastMessageContent());
-////            mTvRecentTime.setText(TimeUtil.getChatTime(false,conversations.get(0).getLastMessageTime()));
-////            long unread = conversations.get(0).getUnReadCount();
-////            if(unread>0){
-////                mTvRecentUnread.setEnabled(true);
-////                mTvRecentUnread.setText(String.valueOf(unread));
-////            }else{
-////                mTvRecentUnread.setEnabled(false);
-////            }
-//            mSwipeRefresh.setRefreshing(false);
-//        }
         return rootView;
     }
 
@@ -198,6 +175,7 @@ public class ConversationFragment extends Fragment {
     @OnClick(R.id.rl2)
     public void rl2Click(){
         Toast.makeText(getActivity(), "点击了", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getActivity(), NewFriendActivity.class));
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -18,10 +19,15 @@ import cn.bmob.newim.event.MessageEvent;
 import cn.bmob.newim.event.OfflineMessageEvent;
 import cn.bmob.newim.listener.BmobIMMessageHandler;
 import cn.bmob.newim.notification.BmobNotificationManager;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.GetListener;
+import cn.bmob.v3.listener.UpdateListener;
 import xm.lasproject.R;
 import xm.lasproject.bean.AgreeAddFriendMessage;
 import xm.lasproject.bean.NewFriend;
 import xm.lasproject.bean.NewFriendManager;
+import xm.lasproject.bean.User;
 import xm.lasproject.data.AddFriendMessage;
 import xm.lasproject.event.RefreshEvent;
 import xm.lasproject.presentation.activity.ChatActivity;
@@ -113,6 +119,39 @@ public class DemoMessageHandler extends BmobIMMessageHandler {
             addFriend(agree.getFromId());//添加消息的发送方为好友
             //这里应该也需要做下校验--来检测下是否已经同意过该好友请求，我这里省略了
             showAgreeNotify(info,agree);
+            //处理当邀请的用户同意添加好友后更新数据
+
+            final User currentUser = BmobUser.getCurrentUser(context, User.class);
+            final String Uid= info.getUserId();
+            BmobQuery<User> query = new BmobQuery<User>();
+            query.getObject(context, Uid, new GetListener<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    //同意请求后，修改配对信息
+                    //修改当前用户在数据库中的信息
+                    currentUser.setPairing("1");
+                    String pairingInfo = Uid + "," + user.getUsername() + ","+user.getPhoto();
+                    currentUser.setPairingInfo(pairingInfo);
+                    currentUser.update(context, new UpdateListener() {
+                        @Override
+                        public void onSuccess() {
+                            Log.e("DemoMessageHandler", "用户的信息修改成功");
+                        }
+
+                        @Override
+                        public void onFailure(int i, String s) {
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure(int i, String s) {
+
+                }
+            });
+
         }else{
             Toast.makeText(context,"接收到的自定义消息："+msg.getMsgType() + "," + msg.getContent() + "," + msg.getExtra(),Toast.LENGTH_SHORT).show();
         }

@@ -70,6 +70,7 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     private RecordPresenter mRecordPresenter;
     private User mUser;
     private RecordListAdapter mRecordListAdapter;
+    private String mPairingUserId;
 
     public RecordFragment() {
     }
@@ -90,6 +91,12 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
         View rootView = inflater.inflate(R.layout.fragment_record, container, false);
         ButterKnife.bind(this, rootView);
         mUser = BmobUser.getCurrentUser(getActivity(), User.class);
+
+        String pairingInfo = mUser.getPairingInfo();
+        if (pairingInfo != null) {
+            String[] split = pairingInfo.split(",");
+            mPairingUserId = split[0];
+        }
 
         mRecordPresenter = new RecordPresenter(this);
 //        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
@@ -126,8 +133,8 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
         switch (item.getItemId()) {
             case R.id.action_add:
                 Intent intent = new Intent();
-                intent.setClass(getActivity(),AddRecordActivity.class);
-                startActivityForResult(intent,100);
+                intent.setClass(getActivity(), AddRecordActivity.class);
+                startActivityForResult(intent, 100);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -135,11 +142,14 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            refreshData();
+        refreshData();
     }
 
     private void refreshData() {
         mRecordPresenter.getRecordList(mUser.getObjectId());
+        if (mPairingUserId != null) {
+            mRecordPresenter.getRecordList(mPairingUserId);
+        }
     }
 
     @Override
@@ -159,6 +169,7 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
 
     @Override
     public void success(RecordMode response) {
+
 //        mSwipeRefresh.setRefreshing(false);
         final List<RecordMode.ResultsBean> dataList = new ArrayList<>();
 //        if (response.getResults().isEmpty()) {
@@ -175,6 +186,10 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
         Collections.sort(dataList, c);
 
 
+        setAdapterDatas(dataList);
+    }
+
+    private void setAdapterDatas(final List<RecordMode.ResultsBean> dataList) {
         mRecordListAdapter = new RecordListAdapter(getActivity(), dataList);
         mRecyclerView.setAdapter(mRecordListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -189,7 +204,7 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
                 bundle.putSerializable("recordDetails", resultsBean);
                 intent.putExtras(bundle);
                 intent.setClass(getActivity(), RecordDetailsActivity.class);
-                startActivityForResult(intent,101);
+                startActivityForResult(intent, 101);
             }
         });
     }
@@ -197,6 +212,9 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     @Override
     public void setPresenter(IRecordContract.Presenter presenter) {
         presenter.getRecordList(mUser.getObjectId());
+        if (mPairingUserId != null) {
+            presenter.getRecordList(mPairingUserId);
+        }
     }
 }
 
@@ -206,8 +224,8 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
  */
 class ComparatorDate implements Comparator {
     public int compare(Object obj1, Object obj2) {
-        RecordMode.ResultsBean o1 = (RecordMode.ResultsBean)obj1;
-        RecordMode.ResultsBean o2 = (RecordMode.ResultsBean)obj1;
+        RecordMode.ResultsBean o1 = (RecordMode.ResultsBean) obj1;
+        RecordMode.ResultsBean o2 = (RecordMode.ResultsBean) obj1;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-M-d H:mm:ss");
         Date begin = null;
         Date end = null;
@@ -217,7 +235,7 @@ class ComparatorDate implements Comparator {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (begin.before(end)){
+        if (begin.before(end)) {
             return 1;
         } else {
             return -1;

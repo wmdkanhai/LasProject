@@ -48,6 +48,7 @@ import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.newim.listener.MessagesQueryListener;
 import cn.bmob.newim.listener.ObseverListener;
 import cn.bmob.newim.listener.OnRecordChangeListener;
+import cn.bmob.newim.notification.BmobNotificationManager;
 import cn.bmob.v3.exception.BmobException;
 import xm.lasproject.R;
 import xm.lasproject.presentation.adapter.ChatAdapter;
@@ -121,6 +122,49 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
         initSwipeLayout();
         initVoiceView();
         initBottomView();
+    }
+
+    private void initSwipeLayout() {
+        mSwipeRefresh.setEnabled(true);
+        layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        adapter = new ChatAdapter(this, c);
+        mRecyclerView.setAdapter(adapter);
+        mActivityChat.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mActivityChat.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                mSwipeRefresh.setRefreshing(true);
+                //自动刷新
+                queryMessages(null);
+            }
+        });
+
+        //下拉加载
+        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                BmobIMMessage msg = adapter.getFirstMessage();
+                queryMessages(msg);
+            }
+        });
+
+        //设置RecyclerView的点击事件
+        adapter.setOnRecyclerViewListener(new OnRecyclerViewListener() {
+            @Override
+            public void onItemClick(int position) {
+                Log.e("",""+position);
+            }
+
+            @Override
+            public boolean onItemLongClick(int position) {
+                //这里省了个懒，直接长按就删除了该消息
+                c.deleteMessage(adapter.getItem(position));
+                adapter.remove(position);
+                return true;
+            }
+        });
     }
 
     //初始化语音界面
@@ -343,50 +387,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
         return toast;
     }
 
-    private void initSwipeLayout() {
-        mSwipeRefresh.setEnabled(true);
-        layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        adapter = new ChatAdapter(this, c);
-        mRecyclerView.setAdapter(adapter);
 
-
-        mActivityChat.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mActivityChat.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                mSwipeRefresh.setRefreshing(true);
-                //自动刷新
-                queryMessages(null);
-            }
-        });
-
-        //下拉加载
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                BmobIMMessage msg = adapter.getFirstMessage();
-                queryMessages(msg);
-            }
-        });
-
-        //设置RecyclerView的点击事件
-        adapter.setOnRecyclerViewListener(new OnRecyclerViewListener() {
-            @Override
-            public void onItemClick(int position) {
-                Log.e("",""+position);
-            }
-
-            @Override
-            public boolean onItemLongClick(int position) {
-                //这里省了个懒，直接长按就删除了该消息
-                c.deleteMessage(adapter.getItem(position));
-                adapter.remove(position);
-                return true;
-            }
-        });
-    }
 
     private void initBottomView() {
         mEditMsg.setOnTouchListener(new View.OnTouchListener() {
@@ -568,6 +569,32 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
                 ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
                         .showSoftInput(mEditMsg, 0);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        //锁屏期间的收到的未读消息需要添加到聊天界面中
+        addUnReadMessage();
+        //添加页面消息监听器
+        BmobIM.getInstance().addMessageListHandler(this);
+        // 有可能锁屏期间，在聊天界面出现通知栏，这时候需要清除通知
+        BmobNotificationManager.getInstance(this).cancelNotification();
+        super.onResume();
+    }
+
+    /**
+     * 添加未读的通知栏消息到聊天界面
+     */
+    private void addUnReadMessage(){
+        List<MessageEvent> cache = BmobNotificationManager.getInstance(this).getNotificationCacheList();
+        if(cache.size()>0){
+            int size =cache.size();
+            for(int i=0;i<size;i++){
+                MessageEvent event = cache.get(i);
+                addMessage2Chat(event);
+            }
+        }
+        scrollToBottom();
     }
 
 
