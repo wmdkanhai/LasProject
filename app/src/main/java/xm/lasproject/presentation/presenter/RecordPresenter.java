@@ -2,6 +2,9 @@ package xm.lasproject.presentation.presenter;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.Call;
 import xm.lasproject.bean.RecordMode;
 import xm.lasproject.presentation.contract.IRecordContract;
@@ -37,6 +40,8 @@ public class RecordPresenter implements IRecordContract.Presenter {
     }
 
 
+    final List<RecordMode.ResultsBean> list = new ArrayList<>();
+
     @Override
     public void getRecordList(String userObjectId) {
         String url = "http://cloud.bmob.cn/248d651e447d9cc8/getRecordInfo";
@@ -51,7 +56,10 @@ public class RecordPresenter implements IRecordContract.Presenter {
 
                              @Override
                              public void onResponse(RecordMode response, int id) {
-                                 mView.success(response);
+                                 for(int i = 0;i<response.getResults().size();i++){
+                                     list.add(response.getResults().get(i));
+                                 }
+                                 mView.success(list);
                                  mView.hideLoading();
                              }
                          }

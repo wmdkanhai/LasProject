@@ -38,9 +38,14 @@ public class CommunityModeAdapter extends BaseRecyclerAdapter<CommunityMode.Resu
 
     @Override
     public void bindData(RecyclerViewHolder holder, int position, CommunityMode.ResultsBean item) {
-        holder.setText(R.id.textView,data.get(position).getModeDescribe());
+        holder.setText(R.id.textView, data.get(position).getModeDescribe());
         ImageView imageView = holder.getImageView(R.id.imageView);
-        Glide.with(mContext).load(data.get(position).getModePicture().getUrl()).into(imageView);
+
+        if (data.get(position).getModePicture()!=null) {
+            Glide.with(mContext).load(data.get(position).getModePicture().getUrl()).into(imageView);
+        } else {
+            Glide.with(mContext).load(R.mipmap.ic_launcher).into(imageView);
+        }
     }
 
 

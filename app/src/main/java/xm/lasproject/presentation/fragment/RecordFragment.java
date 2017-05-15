@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,8 +54,6 @@ import xm.lasproject.presentation.presenter.RecordPresenter;
 
 public class RecordFragment extends Fragment implements IRecordContract.View {
 
-    //    @BindView(R.id.swipe_refresh)
-//    SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.tb_toolbar)
     Toolbar mTbToolbar;
     @BindView(R.id.recyclerView)
@@ -99,8 +96,6 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
         }
 
         mRecordPresenter = new RecordPresenter(this);
-//        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        refreshData();
         initToolbar();
         showLoading();
 
@@ -111,15 +106,9 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     private void initToolbar() {
         setHasOptionsMenu(true);
         ((AppCompatActivity) getActivity()).setSupportActionBar(mTbToolbar);
-//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-//        if (actionBar != null){
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
         mCollapsingToolbar.setTitle("我的记录");
         Glide.with(this).load(R.drawable.bg_splash).into(mImageView);
 
-//        //去掉自带的标题
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -142,7 +131,9 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        refreshData();
+        if (requestCode == 100){
+            refreshData();
+        }
     }
 
     private void refreshData() {
@@ -150,6 +141,7 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
         if (mPairingUserId != null) {
             mRecordPresenter.getRecordList(mPairingUserId);
         }
+
     }
 
     @Override
@@ -168,26 +160,12 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     }
 
     @Override
-    public void success(RecordMode response) {
-
-//        mSwipeRefresh.setRefreshing(false);
-        final List<RecordMode.ResultsBean> dataList = new ArrayList<>();
-//        if (response.getResults().isEmpty()) {
-//            RecordMode.ResultsBean resultsBean = new RecordMode.ResultsBean();
-//            resultsBean.setUserPhotoUrl(mUser.getPhoto().getFileUrl(getActivity()));
-//            resultsBean.setCreatedAt(mUser.getCreatedAt());
-//            resultsBean.setRecordContent("请添加你的记录吧");
-//            dataList.add(resultsBean);
-//        }
-        for (RecordMode.ResultsBean r : response.getResults()) {
-            dataList.add(r);
-        }
+    public void success(List<RecordMode.ResultsBean> list) {
         ComparatorDate c = new ComparatorDate();
-        Collections.sort(dataList, c);
-
-
-        setAdapterDatas(dataList);
+        Collections.sort(list, c);
+        setAdapterDatas(list);
     }
+
 
     private void setAdapterDatas(final List<RecordMode.ResultsBean> dataList) {
         mRecordListAdapter = new RecordListAdapter(getActivity(), dataList);
@@ -212,9 +190,9 @@ public class RecordFragment extends Fragment implements IRecordContract.View {
     @Override
     public void setPresenter(IRecordContract.Presenter presenter) {
         presenter.getRecordList(mUser.getObjectId());
-        if (mPairingUserId != null) {
-            presenter.getRecordList(mPairingUserId);
-        }
+//        if (mPairingUserId != null) {
+//            presenter.getRecordList(mPairingUserId);
+//        }
     }
 }
 

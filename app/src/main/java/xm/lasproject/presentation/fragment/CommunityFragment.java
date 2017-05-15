@@ -28,8 +28,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import xm.lasproject.R;
 import xm.lasproject.bean.CommunityMode;
+import xm.lasproject.presentation.activity.CommunityAddModeActivity;
 import xm.lasproject.presentation.activity.CommunityListActivity;
-import xm.lasproject.presentation.activity.CommunitySearchActivity;
 import xm.lasproject.presentation.adapter.BaseRecyclerAdapter;
 import xm.lasproject.presentation.adapter.CommunityModeAdapter;
 import xm.lasproject.presentation.adapter.MyPagerAdapter;
@@ -153,8 +153,11 @@ public class CommunityFragment extends Fragment implements ViewPager.OnPageChang
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_search:
-                startActivity(new Intent(getActivity(), CommunitySearchActivity.class));
+//            case R.id.action_search:
+//                startActivity(new Intent(getActivity(), CommunitySearchActivity.class));
+//                break;
+            case R.id.action_add:
+                startActivity(new Intent(getActivity(), CommunityAddModeActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -275,6 +278,7 @@ public class CommunityFragment extends Fragment implements ViewPager.OnPageChang
                 Intent intent = new Intent();
                 intent.putExtra("title", dataList.get(pos).getModeDescribe());
                 intent.putExtra("modeType", dataList.get(pos).getModeType());
+                intent.putExtra("modeDescribe", dataList.get(pos).getModeDescribe());
                 intent.setClass(getActivity(), CommunityListActivity.class);
                 startActivity(intent);
             }

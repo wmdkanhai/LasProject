@@ -1,5 +1,7 @@
 package xm.lasproject.presentation.contract;
 
+import java.util.List;
+
 import xm.lasproject.bean.RecordMode;
 import xm.lasproject.presentation.BasePresenter;
 import xm.lasproject.presentation.BaseView;
@@ -19,7 +21,7 @@ public interface IRecordContract {
         void showLoading();
         void hideLoading();
         void showError(String message);
-        void success(RecordMode response);
+        void success(List<RecordMode.ResultsBean> list);
 
     }
 

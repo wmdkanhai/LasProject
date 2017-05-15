@@ -95,7 +95,11 @@
         </activity>
         <activity android:name=".presentation.activity.Chat2Activity">
         </activity>
-        <activity android:name=".presentation.activity.RecordDetailsActivity" android:windowSoftInputMode="stateVisible|adjustResize">
+        <activity
+            android:name=".presentation.activity.RecordDetailsActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+        <activity android:name=".presentation.activity.CommunityAddModeActivity">
         </activity>
     </application>
 

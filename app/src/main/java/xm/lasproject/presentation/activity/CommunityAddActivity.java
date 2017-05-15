@@ -16,9 +16,11 @@ import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.SaveListener;
 import xm.lasproject.R;
 import xm.lasproject.bean.CommunityTheme;
+import xm.lasproject.bean.User;
 
 public class CommunityAddActivity extends AppCompatActivity {
 
@@ -80,7 +82,8 @@ public class CommunityAddActivity extends AppCompatActivity {
             CommunityTheme communityTheme = new CommunityTheme();
             communityTheme.setUsername(mSharedPreferences.getString("username",""));
             communityTheme.setUserObjectId(mSharedPreferences.getString("objectId",""));
-            communityTheme.setSex("男");
+            User currentUser = BmobUser.getCurrentUser(this, User.class);
+            communityTheme.setSex(currentUser.getSex());
             communityTheme.setModeType(mModeType);
             communityTheme.setTitle(mEtTitle.getText().toString());
             communityTheme.setContent(mEtContent.getText().toString());

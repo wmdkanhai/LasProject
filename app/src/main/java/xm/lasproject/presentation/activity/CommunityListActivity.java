@@ -39,6 +39,7 @@ public class CommunityListActivity extends AppCompatActivity implements ICommuni
     RecyclerView mRecyclerView;
     private CommunityListPresenter mCommunityListPresenter;
     private String mModeType;
+    private String mModeDescribe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class CommunityListActivity extends AppCompatActivity implements ICommuni
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
         mModeType = intent.getStringExtra("modeType");
+        mModeDescribe = intent.getStringExtra("modeDescribe");
         ButterKnife.bind(this);
         mTvTitle.setText(title);
         mCommunityListPresenter = new CommunityListPresenter(this);
@@ -98,6 +100,7 @@ public class CommunityListActivity extends AppCompatActivity implements ICommuni
             case R.id.action_add:
                 Intent intent = new Intent();
                 intent.putExtra("modeType", mModeType);
+                intent.putExtra("modeDescribe", mModeDescribe);
                 intent.setClass(this, CommunityAddActivity.class);
                 startActivityForResult(intent,0);
                 break;

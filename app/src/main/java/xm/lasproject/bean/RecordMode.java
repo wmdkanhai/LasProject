@@ -101,5 +101,24 @@ public class RecordMode {
         public void setUsername(String username) {
             this.username = username;
         }
+
+        @Override
+        public String toString() {
+            return "ResultsBean{" +
+                    "recordContent='" + recordContent + '\'' +
+                    ", userObjectId='" + userObjectId + '\'' +
+                    ", userPhotoUrl='" + userPhotoUrl + '\'' +
+                    ", username='" + username + '\'' +
+                    '}';
+        }
     }
+
+    @Override
+    public String toString() {
+        return "RecordMode{" +
+                "results=" + results +
+                '}';
+    }
+
+
 }
