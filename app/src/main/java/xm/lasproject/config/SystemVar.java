@@ -26,4 +26,6 @@ public class SystemVar {
     public static final int STATUS_VERIFY_REFUSE=3;
     //好友请求：我发出的好友请求-暂未存储到本地数据库中
     public static final int STATUS_VERIFY_ME_SEND=4;
+
+    public static String video_url= null;
 }

@@ -1,7 +1,7 @@
 package xm.lasproject.presentation.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,6 +21,9 @@ import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.exception.BmobException;
 import xm.lasproject.R;
+import xm.lasproject.presentation.activity.PlayPhotoActivity;
+
+import static xm.lasproject.R.id.iv_avatar;
 
 /**
  * 发送的文本类型
@@ -29,7 +32,7 @@ public class SendImageHolder extends BaseViewHolder {
 
     @BindView(R.id.tv_time)
     TextView mTvTime;
-    @BindView(R.id.iv_avatar)
+    @BindView(iv_avatar)
     ImageView mIvAvatar;
     @BindView(R.id.iv_picture)
     ImageView mIvPicture;
@@ -54,7 +57,8 @@ public class SendImageHolder extends BaseViewHolder {
         BmobIMMessage msg = (BmobIMMessage) o;
         //用户信息的获取必须在buildFromDB之前，否则会报错'Entity is detached from DAO context'
         final BmobIMUserInfo info = msg.getBmobIMUserInfo();
-        Glide.with(mContext).load(info.getAvatar()).into(mIvAvatar);
+        Glide.with(mContext).load(R.mipmap.ic_launcher).placeholder(R.mipmap.ic_launcher).into(mIvAvatar);
+//        Glide.with(mContext).load(info.getAvatar()).placeholder(R.mipmap.ic_launcher).into(mIvAvatar);
 //        ImageLoaderFactory.getLoader().loadAvator(iv_avatar, info != null ? info.getAvatar() : null, R.mipmap.ic_launcher);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
         String time = dateFormat.format(msg.getCreateTime());
@@ -78,7 +82,12 @@ public class SendImageHolder extends BaseViewHolder {
         }
 
         //发送的不是远程图片地址，则取本地地址
-        Glide.with(mContext).load(message.getRemoteUrl()).into(mIvPicture);
+        if (message.getRemoteUrl()== null){
+            Glide.with(mContext).load(message.getLocalPath()).into(mIvPicture);
+        }else {
+            Glide.with(mContext).load(message.getRemoteUrl()).into(mIvPicture);
+        }
+
 //        ImageLoaderFactory.getLoader().load(mIvPicture, TextUtils.isEmpty(message.getRemoteUrl()) ? message.getLocalPath() : message.getRemoteUrl(), R.mipmap.ic_launcher, null);
 //    ViewUtil.setPicture(TextUtils.isEmpty(message.getRemoteUrl()) ? message.getLocalPath():message.getRemoteUrl(), R.mipmap.ic_launcher, mIvPicture,null);
 
@@ -91,7 +100,11 @@ public class SendImageHolder extends BaseViewHolder {
         mIvPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast("点击图片:" + (TextUtils.isEmpty(message.getRemoteUrl()) ? message.getLocalPath() : message.getRemoteUrl()) + "");
+
+                Intent intent = new Intent();
+                intent.setClass(mContext, PlayPhotoActivity.class);
+                intent.putExtra("data",message.getLocalPath());
+                mContext.startActivity(intent);
                 if (onRecyclerViewListener != null) {
                     onRecyclerViewListener.onItemClick(getAdapterPosition());
                 }

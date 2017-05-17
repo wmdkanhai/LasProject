@@ -69,7 +69,7 @@ public class BaseActivity extends FragmentActivity {
     }
 
     protected final static String NULL = "";
-    private Toast toast;
+    private static Toast toast;
     public void toast(final Object obj) {
         try {
             runOnMain(new Runnable() {

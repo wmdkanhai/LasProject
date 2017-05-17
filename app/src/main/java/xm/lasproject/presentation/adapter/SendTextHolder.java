@@ -54,7 +54,8 @@ public class SendTextHolder extends BaseViewHolder implements View.OnClickListen
         final BmobIMMessage message = (BmobIMMessage) o;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         final BmobIMUserInfo info = message.getBmobIMUserInfo();
-        Glide.with(mContext).load(info.getAvatar()).into(iv_avatar);
+        Glide.with(mContext).load(R.mipmap.ic_launcher).placeholder(R.mipmap.ic_launcher).into(iv_avatar);
+//        Glide.with(mContext).load(info.getAvatar()).placeholder(R.mipmap.ic_launcher).into(iv_avatar);
 //        ImageLoaderFactory.getLoader().loadAvator(iv_avatar, info != null ? info.getAvatar() : null, R.mipmap.head);
         String time = dateFormat.format(message.getCreateTime());
         String content = message.getContent();

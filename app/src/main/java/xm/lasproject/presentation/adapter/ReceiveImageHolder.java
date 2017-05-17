@@ -1,11 +1,13 @@
 package xm.lasproject.presentation.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -16,6 +18,7 @@ import cn.bmob.newim.bean.BmobIMImageMessage;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMUserInfo;
 import xm.lasproject.R;
+import xm.lasproject.presentation.activity.PlayPhotoActivity;
 
 /**
  * 接收到的文本类型
@@ -38,13 +41,17 @@ public class ReceiveImageHolder extends BaseViewHolder {
         this.mContext = context;
     }
 
+    /**
+     * @param o
+     */
     @Override
     public void bindData(Object o) {
         BmobIMMessage msg = (BmobIMMessage) o;
         //用户信息的获取必须在buildFromDB之前，否则会报错'Entity is detached from DAO context'
         final BmobIMUserInfo info = msg.getBmobIMUserInfo();
 
-        Glide.with(mContext).load(info.getAvatar()).into(iv_avatar);
+//        Glide.with(mContext).load(info.getAvatar()).placeholder(R.mipmap.ic_launcher).into(iv_avatar);
+        Glide.with(mContext).load(R.mipmap.ic_launcher).placeholder(R.mipmap.ic_launcher).into(iv_avatar);
 //        ImageLoaderFactory.getLoader().loadAvator(iv_avatar, info != null ? info.getAvatar() : null, R.mipmap.head);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
         String time = dateFormat.format(msg.getCreateTime());
@@ -53,6 +60,7 @@ public class ReceiveImageHolder extends BaseViewHolder {
         final BmobIMImageMessage message = BmobIMImageMessage.buildFromDB(false, msg);
 //        //显示图片
         Glide.with(mContext).load(message.getRemoteUrl()).into(iv_picture);
+        progress_load.setVisibility(View.GONE);
 //        ImageLoaderFactory.getLoader().load(iv_picture, message.getRemoteUrl(), R.mipmap.ic_launcher, new ImageLoadingListener() {
 //            ;
 //
@@ -81,14 +89,18 @@ public class ReceiveImageHolder extends BaseViewHolder {
         iv_avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast("点击" + info.getName() + "的头像");
+
             }
         });
 
         iv_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast("点击图片:" + message.getRemoteUrl() + "");
+                Toast.makeText(mContext, "照片被点击了", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setClass(mContext, PlayPhotoActivity.class);
+                intent.putExtra("data",message.getRemoteUrl());
+                mContext.startActivity(intent);
                 if (onRecyclerViewListener != null) {
                     onRecyclerViewListener.onItemClick(getAdapterPosition());
                 }

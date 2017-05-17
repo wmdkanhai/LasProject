@@ -60,4 +60,6 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
+    //jcameraView的依赖
+    compile 'cjt.library.wheel:camera:1.0.5'
 }

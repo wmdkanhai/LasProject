@@ -1,10 +1,16 @@
 package xm.lasproject.presentation.activity;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +48,10 @@ import butterknife.OnClick;
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMAudioMessage;
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMImageMessage;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMTextMessage;
+import cn.bmob.newim.bean.BmobIMVideoMessage;
 import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.core.BmobRecordManager;
 import cn.bmob.newim.event.MessageEvent;
@@ -104,11 +116,11 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
 
     private Drawable[] drawable_Anims;// 话筒动画
     BmobRecordManager recordManager;
-    BmobIMConversation c;
+    static BmobIMConversation c;
 
-    ChatAdapter adapter;
+    static ChatAdapter adapter;
 
-    protected LinearLayoutManager layoutManager;
+    protected static LinearLayoutManager layoutManager;
 
 
     @Override
@@ -154,7 +166,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
         adapter.setOnRecyclerViewListener(new OnRecyclerViewListener() {
             @Override
             public void onItemClick(int position) {
-                Log.e("",""+position);
+                Log.e("", "" + position);
             }
 
             @Override
@@ -175,7 +187,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     }
 
     private void initNaviView() {
-        mToolbar.setTitle(c.getConversationTitle());
+        mToolbar.setTitle(c.getConversationTitle().toString());
     }
 
 
@@ -252,7 +264,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     /**
      * 消息发送监听器
      */
-    public MessageSendListener listener = new MessageSendListener() {
+    public static MessageSendListener listener = new MessageSendListener() {
 
         @Override
         public void onProgress(int value) {
@@ -265,17 +277,17 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
         public void onStart(BmobIMMessage msg) {
             super.onStart(msg);
             adapter.addMessage(msg);
-            mEditMsg.setText("");
+//            mEditMsg.setText("");
             scrollToBottom();
         }
 
         @Override
         public void done(BmobIMMessage msg, BmobException e) {
             adapter.notifyDataSetChanged();
-            mEditMsg.setText("");
+//            mEditMsg.setText("");
             scrollToBottom();
             if (e != null) {
-                toast(e.getMessage());
+//                toast(e.getMessage());
             }
         }
     };
@@ -290,17 +302,17 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     }
 
     private void addMessage2Chat(MessageEvent event) {
-        BmobIMMessage msg =event.getMessage();
-        if(c!=null && event!=null && c.getConversationId().equals(event.getConversation().getConversationId()) //如果是当前会话的消息
-                && !msg.isTransient()){//并且不为暂态消息
-            if(adapter.findPosition(msg)<0){//如果未添加到界面中
+        BmobIMMessage msg = event.getMessage();
+        if (c != null && event != null && c.getConversationId().equals(event.getConversation().getConversationId()) //如果是当前会话的消息
+                && !msg.isTransient()) {//并且不为暂态消息
+            if (adapter.findPosition(msg) < 0) {//如果未添加到界面中
                 adapter.addMessage(msg);
                 //更新该会话下面的已读状态
                 c.updateReceiveStatus(msg);
             }
             scrollToBottom();
-        }else{
-            Log.e("chatActivity","不是与当前聊天对象的消息");
+        } else {
+            Log.e("chatActivity", "不是与当前聊天对象的消息");
         }
     }
 
@@ -388,7 +400,6 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     }
 
 
-
     private void initBottomView() {
         mEditMsg.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -427,7 +438,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
         });
     }
 
-    private void scrollToBottom() {
+    private static void scrollToBottom() {
         layoutManager.scrollToPositionWithOffset(adapter.getItemCount() - 1, 0);
     }
 
@@ -454,6 +465,7 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     @OnClick(R.id.btn_chat_send)
     public void onSendClick(View view) {
         sendMessage();
+        mEditMsg.setText("");
     }
 
     /**
@@ -513,13 +525,25 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     //点击更多中的图片
     @OnClick(R.id.tv_picture)
     public void onPictureClick(View view) {
+//        BmobIMImageMessage image =new BmobIMImageMessage(Environment.getExternalStorageDirectory()+"/a.jpg");
+//        c.sendMessage(image, listener);
+        openAlbum();
     }
 
     //点击更多中的照相
     @OnClick(R.id.tv_camera)
     public void onCameraClick(View view) {
-//        sendRemoteImageMessage();
+        Intent intent = new Intent(Chat2Activity.this, JCameraActivity.class);
+        startActivityForResult(intent, 102);
     }
+
+    public static void sendVideo(String url) {
+        if (url != null) {
+            BmobIMVideoMessage videoMessage = new BmobIMVideoMessage(url);
+            c.sendMessage(videoMessage, listener);
+        }
+    }
+
 
     //点击更多中的位置
     @OnClick(R.id.tv_location)
@@ -528,11 +552,73 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     }
 
 
+    /**
+     * 照相
+     */
 
-    /**首次加载，可设置msg为null，下拉刷新的时候，默认取消息表的第一个msg作为刷新的起始时间点，默认按照消息时间的降序排列
+
+    /**
+     * 打开相册选择头像
+     */
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, 101);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        } else {
+            switch (requestCode) {
+                case 100:
+
+                    break;
+                case 101:
+                    Uri originalUri = data.getData();//获取图片uri
+                    //以下方法将获取的uri转为String类型哦。
+                    String[] imgs1 = {MediaStore.Images.Media.DATA};//将图片URI转换成存储路径
+                    Cursor cursor = this.managedQuery(originalUri, imgs1, null, null, null);
+                    int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToFirst();
+                    String img_url = cursor.getString(index);
+                    sendPhoto2(img_url);
+                    break;
+                case 102:
+
+                    break;
+            }
+        }
+    }
+
+    public static void sendPhoto(Bitmap bitmap) {
+        File file=new File(Environment.getExternalStorageDirectory(),"photo.jpg");//将要保存图片的路径
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BmobIMImageMessage image = new BmobIMImageMessage(file);
+        c.sendMessage(image, listener);
+    }
+
+    private void sendPhoto2(String url) {
+        BmobIMImageMessage image = new BmobIMImageMessage(url);
+        c.sendMessage(image, listener);
+    }
+
+
+
+    /**
+     * 首次加载，可设置msg为null，下拉刷新的时候，默认取消息表的第一个msg作为刷新的起始时间点，默认按照消息时间的降序排列
+     *
      * @param msg
      */
-    public void queryMessages(BmobIMMessage msg){
+    public void queryMessages(BmobIMMessage msg) {
         c.queryMessages(msg, 10, new MessagesQueryListener() {
             @Override
             public void done(List<BmobIMMessage> list, BmobException e) {
@@ -585,11 +671,11 @@ public class Chat2Activity extends BaseActivity implements ObseverListener, Mess
     /**
      * 添加未读的通知栏消息到聊天界面
      */
-    private void addUnReadMessage(){
+    private void addUnReadMessage() {
         List<MessageEvent> cache = BmobNotificationManager.getInstance(this).getNotificationCacheList();
-        if(cache.size()>0){
-            int size =cache.size();
-            for(int i=0;i<size;i++){
+        if (cache.size() > 0) {
+            int size = cache.size();
+            for (int i = 0; i < size; i++) {
                 MessageEvent event = cache.get(i);
                 addMessage2Chat(event);
             }

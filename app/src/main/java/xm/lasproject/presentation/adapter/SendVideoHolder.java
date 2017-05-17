@@ -1,11 +1,14 @@
 package xm.lasproject.presentation.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -19,6 +22,7 @@ import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.exception.BmobException;
 import xm.lasproject.R;
+import xm.lasproject.presentation.activity.PlayVideoActivity;
 
 /**
  * 发送的视频类型---这是举个例子，并没有展示出视频缩略图等信息，开发者可自行实现
@@ -30,7 +34,7 @@ public class SendVideoHolder extends BaseViewHolder implements View.OnClickListe
     @BindView(R.id.iv_avatar)
     ImageView iv_avatar;
     @BindView(R.id.tv_message)
-    TextView tv_message;
+    ImageView tv_message;
     @BindView(R.id.iv_fail_resend)
     ImageView iv_fail_resend;
     @BindView(R.id.tv_send_status)
@@ -41,7 +45,7 @@ public class SendVideoHolder extends BaseViewHolder implements View.OnClickListe
     BmobIMConversation c;
     Context mContext;
     public SendVideoHolder(Context context, ViewGroup root, BmobIMConversation c, OnRecyclerViewListener listener) {
-        super(context, root, R.layout.item_chat_sent_message, listener);
+        super(context, root, R.layout.item_chat_sent_video, listener);
         this.c = c;
         this.mContext = context;
     }
@@ -54,9 +58,14 @@ public class SendVideoHolder extends BaseViewHolder implements View.OnClickListe
         Glide.with(mContext).load(info.getAvatar()).into(iv_avatar);
 //        ImageLoaderFactory.getLoader().loadAvator(iv_avatar, info != null ? info.getAvatar() : null, R.mipmap.head);
 
+
         String time = dateFormat.format(message.getCreateTime());
         String content = message.getContent();
-        tv_message.setText("发送的视频文件：" + content);
+        final String[] split = content.split("&");
+        final String s = split.toString();
+        Log.e("SendVideoHolder", "bindData: "+content );
+        Glide.with(mContext).load(split[0]).into(tv_message);
+//        tv_message.setText("发送的视频文件：" + content);
         tv_time.setText(time);
 
         int status = message.getSendStatus();
@@ -74,7 +83,12 @@ public class SendVideoHolder extends BaseViewHolder implements View.OnClickListe
         tv_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast("点击" + message.getContent());
+                Toast.makeText(mContext, "录像被点击", Toast.LENGTH_SHORT).show();
+                //跳转到播放界面
+                Intent intent = new Intent();
+                intent.setClass(mContext, PlayVideoActivity.class);
+                intent.putExtra("data",split[0]);
+                mContext.startActivity(intent);
                 if (onRecyclerViewListener != null) {
                     onRecyclerViewListener.onItemClick(getAdapterPosition());
                 }

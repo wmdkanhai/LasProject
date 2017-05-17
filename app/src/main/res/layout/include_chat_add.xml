@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:weightSum="4"
     android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="20dp"
     android:orientation="horizontal" >
     
     <TextView 
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="10dp"
         android:gravity="center"
-        android:drawableTop="@mipmap/ic_launcher"
+        android:drawableTop="@drawable/icon_album"
         android:text="照片"
         />
     <TextView 
@@ -24,7 +24,7 @@
         android:drawablePadding="10dp"
         android:gravity="center"
         android:layout_height="wrap_content"
-        android:drawableTop="@mipmap/ic_launcher"
+        android:drawableTop="@drawable/icon_camera"
         android:text="拍摄"
         />
     <TextView 
@@ -34,7 +34,7 @@
         android:drawablePadding="10dp"
         android:gravity="center"
         android:layout_height="wrap_content"
-        android:drawableTop="@mipmap/ic_launcher"
+        android:drawableTop="@drawable/icon_location"
         android:text="位置"
         />
 

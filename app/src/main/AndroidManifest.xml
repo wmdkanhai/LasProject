@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- 通知震动 -->
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
 
     <application
         android:name=".app.MyApplication"
@@ -100,6 +101,12 @@
             android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity android:name=".presentation.activity.CommunityAddModeActivity">
+        </activity>
+        <activity android:name=".presentation.activity.JCameraActivity">
+        </activity>
+        <activity android:name=".presentation.activity.PlayVideoActivity">
+        </activity>
+        <activity android:name=".presentation.activity.PlayPhotoActivity">
         </activity>
     </application>
 
